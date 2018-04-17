@@ -51,13 +51,13 @@ In debian system 'debootstrap' is requried to setup base file system. Install it
 ```
 Now install the base file system, it is preferable to install ubuntu 13.04 or above.
 ```
-# debootstrap --variant=buildd --arch i386 raring /path/to/chroot/ http://archive.ubuntu.com/ubuntu
+# debootstrap --variant=buildd --arch i386 xenial /path/to/chroot/ http://archive.ubuntu.com/ubuntu
 ```
 Once this is done, enter inside the jail and setup all the compilers and interpreters. 
 ```
 # mount -o bind /proc /path/to/chroot/proc
 # chroot /path/to/chroot
-# echo "deb http://archive.ubuntu.com/ubuntu raring main universe" > "/etc/apt/sources.list"
+# echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" > "/etc/apt/sources.list"
 # apt-get update
 # apt-get install bf bc g++ fpc mono-gmcs openjdk-6-jdk perl php5 python python3 rhino ruby
 ```
