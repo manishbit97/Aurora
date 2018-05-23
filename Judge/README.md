@@ -51,7 +51,7 @@ In Ubuntu system 'debootstrap' is requried to setup base file system. Install it
 ```
 Now install the base file system, it is preferable to install ubuntu 13.04 or above.
 ```
-# debootstrap --variant=buildd --arch i386 raring /path/to/chroot/ http://archive.ubuntu.com/ubuntu
+# debootstrap --variant=buildd --arch i386 xenial /path/to/chroot/ http://archive.ubuntu.com/ubuntu
 ```
 Once this is done, enter inside the jail and setup all the compilers and interpreters. 
 ```
@@ -98,7 +98,7 @@ sql_hostname = '127.0.0.1'
 sql_hostport = 3306
 sql_username = 'aurora'
 sql_password = 'aurora'
-sql_database = 'aurora_main'
+sql_database = 'aurora_dev'
 HOST, PORT = "127.0.0.1", 8723
 ```
 
@@ -118,4 +118,7 @@ and to exit jail execute ```exit```
 **Note :** Each time the system is restarted, proc has to be mounted again using following command.
 ```
 # mount -o bind /proc /path/to/chroot/proc
+# sudo chroot /path/to/proc
+# cd /home/judge
+# sudo python3 judge.py -judge
 ```
