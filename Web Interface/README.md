@@ -26,7 +26,7 @@ You need to edit following line in config.php
 define("SITE_URL", "http://" . $_SERVER['HTTP_HOST'] . "/aurora");      // path to directory
 define("SQL_USER", "aurora");           // Database username    
 define("SQL_PASS", "aurora");           // Database password
-define("SQL_DB", "aurora_main");     	// Database name  
+define("SQL_DB", "aurora_dev");     	// Database name  
 define("SQL_HOST", "127.0.0.1");        // Database host
 define("SQL_PORT", "3306");             // Database port
 ```
