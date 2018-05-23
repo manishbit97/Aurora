@@ -30,8 +30,8 @@ doCompetitionCheck(); //Activate competition when planned
                     $('#sidebar').height($('#mainbar').height());
             });
         </script>
-        <title>CropIn Hiring</title>
-        <link rel='shortcut icon' href='<?php echo SITE_URL; ?>/img/favicon.png' />
+        <title>CropIn</title>
+        <link rel='shortcut icon' href='<?php echo SITE_URL; ?>/img/cropin.jpg' />
     </head>
     <body>
         <?php if ($judge['value'] == 'Active' && isset($_SESSION['loggedin'])) { ?>
@@ -45,7 +45,7 @@ doCompetitionCheck(); //Activate competition when planned
                     } else {
                         n = 1;
                     }
-                    window.document.title = "(" + n + ") CropIn Hiring";
+                    window.document.title = "(" + n + ") CropIn";
                 }
                 function resettile() {
                     $.ajax({
@@ -53,7 +53,7 @@ doCompetitionCheck(); //Activate competition when planned
                         url: "<?php echo SITE_URL; ?>/broadcast.php",
                         data: {updatetime: ""}
                     });
-                    window.document.title = "CropIn Online Judge";
+                    window.document.title = "CropIn";
                 }
                 window.setTimeout("bchk();", <?php echo rand(300000, 600000); ?>);
                 $.ajax("<?php echo SITE_URL; ?>/broadcast.php").done(function(msg) {
@@ -119,122 +119,85 @@ doCompetitionCheck(); //Activate competition when planned
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                  <!--  <a class="navbar-brand" href="<?php /*echo SITE_URL; */?>">Aurora</a>-->
                     <a class="navbar-brand" style= "padding: 0;" href="<?php echo SITE_URL; ?>"><img src="<?php echo SITE_URL; ?>/img/cropin.jpg" style="display: inline-block;" width="170px" height="50px">
-                        &nbsp;
                     </a>
-
                 </div>
 
                 <div class="collapse navbar-collapse" id="navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <!-- <li><a href="<?php echo SITE_URL; ?>/home">Home</a></li> -->
-                        <!--<li><a href="<?php /*echo SITE_URL; */?>/problems">Problems</a></li>
-                        <li><a href="<?php /*echo SITE_URL; */?>/contests">Contests</a></li>
-                        <li><a href="<?php /*echo SITE_URL; */?>/rankings">Rankings</a></li>
-                        <li><a href="<?php /*echo SITE_URL; */?>/submissions">Submissions</a></li>-->
-                        <li>&emsp;</li>
-                        <?php if (isset($_SESSION['loggedin'])) { ?>
-                            <li><a href="<?php echo SITE_URL; ?>/contests" class="btn btn-default">View Contests</a></li>
-<!--                            <button class="btn btn-success navbar-btn">View Contest</button>-->
-                        <?php } ?>
 
-
+                            </ul>
+                        </li>
                     </ul>
-                    <?php if (isset($_SESSION['loggedin'])) { ?>
-                        <ul class="nav navbar-nav pull-right">
-                            <?php if ($_SESSION['team']['status'] == 'Admin') { ?>
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        Admin
-                                        <b class="caret"></b>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href='<?php echo SITE_URL; ?>/adminjudge'>Judge Settings</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/submissions'>View Submissions</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/register'>Register New Candidate</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/adminproblem'>Problem Settings</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/admincontest'>Contest Settings</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/adminteam'>Team Settings</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/admingroup'>Group Settings</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/adminclar'>Clarifications</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/adminbroadcast'>Broadcast</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/adminlog'>Request Logs</a></li>
-                                    </ul>
-                                </li>
-                            <?php } ?>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                    Account
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                   <!-- <li><a href='<?php /*echo SITE_URL; */?>/edit'>Account Settings</a></li>-->
-                                    <li><a href='<?php echo SITE_URL; ?>/process.php?logout'>Logout</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    <?php } ?>
                 </div>
-            </div>
-        </nav>
+            </div> 
+        </nav> 
         <div class="container bodycont">
+
+
+
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <th>Important Rules and Regulations </th>
+                </tr>
+                <tr>
+                    <td style="text-align: justify">
+                        <ul>
+                            <li>Please Note that once you start the exam your timer will begin
+                                and Judge would turn off automatically and codes wont be judged after that time.<br><br>
+                            <li>
+                                Time allotted is 1 Hour
+                            </li><br>
+                            <li>
+                                 You will be redirected to a Contest Page , where 3 Questions would be there , you have to attempt all three questions
+                            </li><br>
+                            <li>
+                                 Allowed Languages are C/C++, Java , Python .
+                            </li> <br>
+                            <li>
+                                <strong>For Sample Solutions Please Visit this Page : <a href="<?php echo SITE_URL;?>/samplesolution.php" target="_blank"> Sample Solution </a></strong>
+                            </li><br>
+                            <li>
+                                For java users follow the Code Submission type of CodeChef IO.- Prefer to use Scanner class , because inputs given would be separated by spaces.
+                            </li><br>
+                            <li>
+                                Python users please note - input Provided would be separated by spaces - So use split function while taking input.
+                            </li><br>
+                            <li>
+                                <strong>Any type of malpractices would be dealt strictly. Only one Login session is allowed and please don't navigate from the current Tab.</strong>
+                            </li><br>
+
+                        </ul>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+
+
             <div class='row'>
-                <div class='col-md-9' id='mainbar'>
-                    <?php if (isset($_SESSION['msg'])) { ?>
-                        <div class="alert alert-info" style="margin-top: 20px;">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <div class="text-center"><?php
-                                echo $_SESSION['msg'];
-                                unset($_SESSION['msg']);
-                                ?></div>
-                        </div>
-                        <?php
-                    }
-                    if (!isset($_GET['tab']) || $_GET['tab'] == 'home') {
-                        $str = 'files/home.php';
-                    } else {
-                        $str = 'files/' . $_GET['tab'] . '.php';
-                    }
-                    if (file_exists($str))
-                        require $str;
-                    else
-                        echo "<br/><br/><br/><div style='padding: 10px;'><h1>Page not Found :(</h1>The page you are searching for is not on this site.</div><br/><br/><br/>";
-                    ?>
-                </div>
-                <div class='col-md-3'>
-                    <!-- Login Panel -->
-                    <div class="panel panel-default">
-                        <?php loginbox(); ?>
-                    </div>
-                    <!-- ./Login Panel -->
 
-                    <!-- Contest Panel -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading text-center">
-                            <h3 class="panel-title">Your Exam Details</h3>
-                        </div>
-                        <div class="panel-body text-center">
-                            <?php contest_status(); ?>
-                        </div>
-                    </div>
-                    <!-- ./Contest Panel -->
+                <div class='col-md-6'>
 
 
-                    <!-- ./Ranking Panel -->
+    <form action="contests/hire1" method="post">
+        <input type="submit" name="begintest" value="Begin test" class="btn btn-primary btn-lg btn-block" />
+    </form>
+
 
                     <?php
-                    /* My Submissions Panel */
-                    if (isset($_SESSION['loggedin'])) //mysubs();
-                    /* Latest Submissions Panel */
-                    if ($judge['value'] == 'Active') //latestsubs();
+                    /* My Submissions Panel
+                    if (isset($_SESSION['loggedin'])) mysubs();
+                    /* Latest Submissions Panel
+                    if ($judge['value'] == 'Active') latestsubs();
                     ?>
 
                 </div>
             </div>
         </div>
-        <div class="footer" >
-            <a href="https://github.com/pushkar8723/Aurora" target="_blank" >Powered By Aurora</a>
+        <div class="footer">
+            
         </div>
     </body>
 </html>

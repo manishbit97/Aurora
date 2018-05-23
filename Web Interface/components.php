@@ -1,5 +1,6 @@
 <?php
 include_once 'functions.php';
+include_once 'config.php';
 include_once 'files/Leaderboard.php';
 include_once 'files/LiveContestRanking.php';
 function loginbox() {
@@ -9,11 +10,10 @@ function loginbox() {
             <h3 class="panel-title">Login</h3>
         </div>
         <div class="panel-body text-center">
-
             <form action="<?php echo SITE_URL; ?>/process.php" method="post" role="form">
                 <div class="input-group" style="margin-bottom: -1px;">
                     <span class="input-group-addon" style="border-bottom-left-radius: 0;"><i class="glyphicon glyphicon-user"></i></span>
-                    <input class="form-control" style="border-bottom-right-radius: 0;" type="text" name="teamname" placeholder="Teamname" required/>
+                    <input class="form-control" style="border-bottom-right-radius: 0;" type="text" name="teamname" placeholder="Username given by CropIN" required/>
                 </div>
                 <div class="input-group">
                     <span style="border-top-left-radius: 0;" class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -21,13 +21,13 @@ function loginbox() {
                 </div><br/>
                 <input type="submit" name="login" value="Log In" class="btn btn-primary btn-block"/>
             </form>
-            <a href='<?php echo SITE_URL; ?>/register'>New Team? Register Here.</a>
+          <a href='<?php echo SITE_URL; ?>'></a>
         </div>
         <?php
     } else {
         ?>
         <div class="panel-heading text-center">
-            <h3 class="panel-title">Team</h3>
+            <h3 class="panel-title">User Details</h3>
         </div>
         <div class="panel-body text-center">
 
@@ -36,13 +36,12 @@ function loginbox() {
                     <tr>
                         <th>Name</th>
                         <th>Score</th>
-                        <th>Overall Rank</th>
                     </tr>
                 </thead>
                 <?php
                 $query = "SELECT count(*)+1 as rank, (select score from teams where tid = " . $_SESSION['team']['id'] . ") as sco FROM `teams` WHERE (score > (select score from teams where tid = " . $_SESSION['team']['id'] . ") and status = 'Normal') or (score = (select score from teams where tid = " . $_SESSION['team']['id'] . ") and penalty < (select penalty from teams where tid = " . $_SESSION['team']['id'] . ") and status='Normal') ";
                 $res = DB::findOneFromQuery($query);
-                echo "<tr><td><a href='" . SITE_URL . "/teams/" . $_SESSION['team']['name'] . "'>" . $_SESSION['team']['name'] . "</a></td><td>$res[sco]</td><td style='text-align: center'>$res[rank]</td></tr>";
+                echo "<tr><td>" . $_SESSION['team']['name'] . "</a></td><td>$res[sco]</td></tr>";
                 ?>
             </table>
         </div>
@@ -78,6 +77,20 @@ function mysubs() { ?>
 
 function contest_status() {
     $status = Array();
+
+    //newcode - to update the end time in admin table...bcz it contains timer settings
+   // $query1 = "select endtime from contest where logindone='started'";
+    //DB::query($query1);
+    //$result1 = DB::findAllFromQuery($query1);
+//    foreach ($result1 as $row) {
+//        $end_t=$row['endtime'];
+//        $sta_t=$row['starttime'];
+//    }
+//    $sql_q = "UPDATE admin SET value=$end_t where variable='endtime' ";
+//    $time = DB::findOneFromQuery($sql_q);
+//    if ($time)
+//        echo "Successful time update";
+//    //new code
     $query = "select * from admin where variable = 'endtime' or variable = 'starttime' or variable = 'mode' or variable='ip' or variable='port'";
     DB::query($query);
     $result = DB::findAllFromQuery($query);
@@ -98,8 +111,11 @@ function contest_status() {
                 <div id="ajax-contest-mode">
                     <h4>
                         <?php
-                        if ($status['mode'] == "Active" && $status['endtime'] < time())
+                        if ($status['mode'] == "Active" && $status['endtime'] < time()) {
                             echo "<span class=\"label label-danger\">Disabled</span>";
+
+
+                        }
                         else {
                             $attributes = array(
                                 "Active" => "success",
@@ -128,11 +144,34 @@ function contest_status() {
         </tr>
     </table>
     <?php
+
     if ($status['mode'] == "Active") { ?>
         <div id='ajax-contest-time'></div>
         <script type='text/javascript'>
-            var totaltime = <?php echo ($status['endtime'] - $status['starttime']); ?>;
-            var countdown = <?php echo $status['endtime'] - time(); ?>;
+            var check=true;
+            console.log('<?php echo $status['mode']?>');
+            var logstatus=<?php echo $_SESSION['loggedin'];?>;
+            var adminstat= '<?php echo $_SESSION['team']['status'];?>';
+            //new query for multiple team , perform logout on his start time and end time... and always keep the mode active.
+            <?php
+            $team_name=$_SESSION['team']['name'];?>
+            <?php
+            $sql_quer= " SELECT starttimeuser,endtimeuser from teams where teamname = '$team_name'";
+            $result2 = DB::findOneFromQuery($sql_quer);
+            $endtimeuser=$result2['endtimeuser'];
+            $starttimeuser = $result2['starttimeuser'];
+            ?>
+            var end_time_user= <?php echo $endtimeuser; ?>;
+
+            var start_time_user = <?php echo $starttimeuser; ?>;
+            console.log(end_time_user+"  - "+start_time_user);
+            //var totaltime =<?php //echo ($status['endtime'] - $status['starttime']); ?>//;
+            var totaltime = end_time_user-start_time_user;
+            var countdown =  end_time_user- <?php echo time(); ?>;
+            console.log(countdown);
+            //alert(countdown);
+
+           // console.log("hello"+countdown);
             function step() {
                 if (countdown >= 0) {
                     var currentPercent = (totaltime-countdown)/totaltime*100;
@@ -143,11 +182,22 @@ function contest_status() {
                 } else {
                     $("div#ajax-contest-time").html();
                     $("div#ajax-contest-mode").html("<h4><span class=\"label label-danger\">Disabled</span></h4>");
+                    check =false;
+                    console.log(logstatus+"    "+adminstat);
+                    if(logstatus === true && adminstat === 'Normal') {
+                        alert("Your Time is over ! You will Be logged out completely");
+                        var logout_loc='<?php echo SITE_URL. '/process.php?logout'; ?>';
+                        window.location = logout_loc;
+                        return null;
+                    }
                     //TODO: (During code review) Better disabling mechanism
+
                 }
                 if (countdown >= 0)
                     countdown--;
-                window.setTimeout("step();", 1000);
+               if(check === true){
+                    window.setTimeout("step();", 1000);
+                }
             }
             step();
         </script>
@@ -174,7 +224,7 @@ function latestsubs() {?>
                 $res = DB::findAllFromQuery($query);
                 $resAttr = array('AC' => 'success', 'RTE' => 'warning', 'WA' => 'danger', 'TLE' => 'warning', 'CE' => 'warning', 'DQ' => 'danger', 'PE' => 'info', '...' => 'default', '' => 'default'); //Defines label attributes
                 foreach ($res as $row)
-                    echo "<tr><td><a href='" . SITE_URL . "/teams/$row[tname]'>$row[tname]</a></td><td><a href='" . SITE_URL . "/problems/$row[pcode]'>$row[pname]</a></td><td><span class='label label-".$resAttr[$row['result']]."'>$row[result]</span></td></tr>";
+                   // echo "<tr><td><a href='" . SITE_URL . "/teams/$row[tname]'>$row[tname]</a></td><td><a href='" . SITE_URL . "/problems/$row[pcode]'>$row[pname]</a></td><td><span class='label label-".$resAttr[$row['result']]."'>$row[result]</span></td></tr>";
                 ?>
             </table>
         </div>

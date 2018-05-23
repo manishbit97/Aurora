@@ -30,7 +30,7 @@ doCompetitionCheck(); //Activate competition when planned
                     $('#sidebar').height($('#mainbar').height());
             });
         </script>
-        <title>CropIn Hiring</title>
+        <title>Aurora</title>
         <link rel='shortcut icon' href='<?php echo SITE_URL; ?>/img/favicon.png' />
     </head>
     <body>
@@ -45,7 +45,7 @@ doCompetitionCheck(); //Activate competition when planned
                     } else {
                         n = 1;
                     }
-                    window.document.title = "(" + n + ") CropIn Hiring";
+                    window.document.title = "(" + n + ") Aurora";
                 }
                 function resettile() {
                     $.ajax({
@@ -53,7 +53,7 @@ doCompetitionCheck(); //Activate competition when planned
                         url: "<?php echo SITE_URL; ?>/broadcast.php",
                         data: {updatetime: ""}
                     });
-                    window.document.title = "CropIn Online Judge";
+                    window.document.title = "Aurora";
                 }
                 window.setTimeout("bchk();", <?php echo rand(300000, 600000); ?>);
                 $.ajax("<?php echo SITE_URL; ?>/broadcast.php").done(function(msg) {
@@ -119,28 +119,11 @@ doCompetitionCheck(); //Activate competition when planned
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                  <!--  <a class="navbar-brand" href="<?php /*echo SITE_URL; */?>">Aurora</a>-->
-                    <a class="navbar-brand" style= "padding: 0;" href="<?php echo SITE_URL; ?>"><img src="<?php echo SITE_URL; ?>/img/cropin.jpg" style="display: inline-block;" width="170px" height="50px">
-                        &nbsp;
-                    </a>
-
+                    <a class="navbar-brand" href="<?php echo SITE_URL; ?>">Aurora</a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <!-- <li><a href="<?php echo SITE_URL; ?>/home">Home</a></li> -->
-                        <!--<li><a href="<?php /*echo SITE_URL; */?>/problems">Problems</a></li>
-                        <li><a href="<?php /*echo SITE_URL; */?>/contests">Contests</a></li>
-                        <li><a href="<?php /*echo SITE_URL; */?>/rankings">Rankings</a></li>
-                        <li><a href="<?php /*echo SITE_URL; */?>/submissions">Submissions</a></li>-->
-                        <li>&emsp;</li>
-                        <?php if (isset($_SESSION['loggedin'])) { ?>
-                            <li><a href="<?php echo SITE_URL; ?>/contests" class="btn btn-default">View Contests</a></li>
-<!--                            <button class="btn btn-success navbar-btn">View Contest</button>-->
-                        <?php } ?>
 
-
-                    </ul>
                     <?php if (isset($_SESSION['loggedin'])) { ?>
                         <ul class="nav navbar-nav pull-right">
                             <?php if ($_SESSION['team']['status'] == 'Admin') { ?>
@@ -151,17 +134,15 @@ doCompetitionCheck(); //Activate competition when planned
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li><a href='<?php echo SITE_URL; ?>/adminjudge'>Judge Settings</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/submissions'>View Submissions</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/register'>Register New Candidate</a></li>
                                         <li><a href='<?php echo SITE_URL; ?>/adminproblem'>Problem Settings</a></li>
                                         <li><a href='<?php echo SITE_URL; ?>/admincontest'>Contest Settings</a></li>
                                         <li><a href='<?php echo SITE_URL; ?>/adminteam'>Team Settings</a></li>
                                         <li><a href='<?php echo SITE_URL; ?>/admingroup'>Group Settings</a></li>
                                         <li><a href='<?php echo SITE_URL; ?>/adminclar'>Clarifications</a></li>
                                         <li><a href='<?php echo SITE_URL; ?>/adminbroadcast'>Broadcast</a></li>
-                                        <li><a href='<?php echo SITE_URL; ?>/adminlog'>Request Logs</a></li>
+                                        <li><a href='<?php echo SITE_URL; ?>/adminlog'>Request Logs</a></li>                                            
                                     </ul>
-                                </li>
+                                </li>                              
                             <?php } ?>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -169,15 +150,15 @@ doCompetitionCheck(); //Activate competition when planned
                                     <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
-                                   <!-- <li><a href='<?php /*echo SITE_URL; */?>/edit'>Account Settings</a></li>-->
+                                    <li><a href='<?php echo SITE_URL; ?>/edit'>Account Settings</a></li>
                                     <li><a href='<?php echo SITE_URL; ?>/process.php?logout'>Logout</a></li>
                                 </ul>
                             </li>
                         </ul>
                     <?php } ?>
                 </div>
-            </div>
-        </nav>
+            </div> 
+        </nav> 
         <div class="container bodycont">
             <div class='row'>
                 <div class='col-md-9' id='mainbar'>
@@ -212,7 +193,7 @@ doCompetitionCheck(); //Activate competition when planned
                     <!-- Contest Panel -->
                     <div class="panel panel-default">
                         <div class="panel-heading text-center">
-                            <h3 class="panel-title">Your Exam Details</h3>
+                            <h3 class="panel-title">Contest</h3>
                         </div>
                         <div class="panel-body text-center">
                             <?php contest_status(); ?>
@@ -220,21 +201,45 @@ doCompetitionCheck(); //Activate competition when planned
                     </div>
                     <!-- ./Contest Panel -->
 
+                    <!-- Ranking Panel -->
+                    <div class="panel panel-default">
 
+                    <?php if ($judge['value'] == 'Active') { ?>
+                        <!-- Contest Ranking -->
+                        <div class="panel-heading text-center">
+                            <h3 class="panel-title">Contest Ranking</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <div id="live-ranking">
+                            <?php getCurrentContestRanking(); ?>
+                                <a style="float:right;" href="<?php echo SITE_URL.'/rank/'.getCurrentContest(); ?>">View all</a>
+                            </div>
+                        </div>
+
+                    <?php } else { ?>
+                        <!-- Overall Ranking -->
+                        <div class="panel-heading text-center">
+                            <h3 class="panel-title">Overall Rankings</h3>
+                        </div>
+                        <div class="panel-body text-center">
+                            <?php rankings(); ?>
+                        </div>
+                    <?php } ?>
+                    </div>
                     <!-- ./Ranking Panel -->
 
                     <?php
                     /* My Submissions Panel */
-                    if (isset($_SESSION['loggedin'])) //mysubs();
+                    if (isset($_SESSION['loggedin'])) mysubs();
                     /* Latest Submissions Panel */
-                    if ($judge['value'] == 'Active') //latestsubs();
+                    if ($judge['value'] == 'Active') latestsubs();
                     ?>
 
                 </div>
             </div>
         </div>
-        <div class="footer" >
-            <a href="https://github.com/pushkar8723/Aurora" target="_blank" >Powered By Aurora</a>
+        <div class="footer">
+            <a href="#" >CropIn Technologies</a>
         </div>
     </body>
 </html>

@@ -15,10 +15,10 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
 // ------------------ LOGIN ------------------- //
     if (isset($_POST['login'])) {
         if (!isset($_POST['teamname']) || $_POST['teamname'] == '') {
-            $_SESSION['msg'] = "Teamname missing";
+            $_SESSION['msg'] = "Username missing";
             redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
         } else if (!isset($_POST['password']) || $_POST['password'] == '') {
-            $_SESSION['msg'] = "Teamname missing";
+            $_SESSION['msg'] = "Username missing";
             redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
         } else {
             $_POST['teamname'] = addslashes($_POST['teamname']);
@@ -26,19 +26,27 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
             $query = "select * from teams where teamname  = '$_POST[teamname]' and pass = '$_POST[password]'";
             echo $query;
             $res = DB::findOneFromQuery($query);
-            if ($res && ($res['status'] == 'Normal' || $res['status'] == 'Admin')) {
+            if ($res && ($res['status'] == 'Normal' || $res['status'] == 'Admin') && $res['examstatus'] === '1') {
                 $save = $_SESSION;
                 session_destroy();
                 session_regenerate_id(true);
-                session_start();
+                session_start() ;
                 $_SESSION = $save;
                 $_SESSION['team']['id'] = $res['tid'];
                 $_SESSION['team']['name'] = $res['teamname'];
                 $_SESSION['loggedin'] = "true";
                 $_SESSION['team']['status'] = $res['status'];
                 $_SESSION['team']['time'] = time();
+                if($res['status'] == 'Normal')
+                    redirectTo(SITE_URL ."/begin.php");
+                else
+                    redirectTo(SITE_URL);
+            }
+            else if($res['examstatus'] === '0'){
+                $_SESSION['msg'] = "You Exam Time is over and you can't Login ! Thanks, Team CropIn";
                 redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
-            } else if ($res) {
+            }
+            else if ($res) {
                 $_SESSION['msg'] = "You can not log in as your current status is : $res[status]";
                 redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
             } else {
@@ -131,7 +139,7 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
                                     $result = DB::findOneFromQuery($query);
                                     if ($result) {
                                         unset($_SESSION['subcode']);
-                                        $_SESSION['msg'] = "Problem submitted successfully. If your problem is not judged then contact admin.";
+                                        $_SESSION['msg'] = "Problem submitted successfully. Please Refresh the page . If your problem is not judged then contact admin.";
                                         $client = stream_socket_client($admin['ip'] . ":" . $admin['port'], $errno, $errorMessage);
                                         if ($client === false) {
                                             $_SESSION["msg"] .= "<br/>Cannot connect to Judge: Contact Admin";
@@ -153,7 +161,7 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
                                 redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
                             }
                         } else {
-                            $_SESSION['msg'] = "Either the problem does not exsits or the language is not allowed.";
+                            $_SESSION['msg'] = "Either the problem does not exists or the language is not allowed.";
                             redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
                         }
                     } else {
@@ -166,7 +174,9 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
                 }
             } else {
                 $_SESSION['msg'] = "You cannot submit at this time.";
+                //redirectTo(SITE_URL . "/process.php?logout");
                 redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
+
             }
         } else {
             $_SESSION['msg'] = "You should be logged in to make a submission.";
@@ -174,7 +184,7 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
         }
 // -------------------------------- REGISTER ---------------------------- //
     } else if (isset($_POST['register'])) {
-        if ((isset($_POST['teamname']) && $_POST['teamname'] != "") && (isset($_POST['password']) && $_POST['password'] != "") && (isset($_POST['repassword']) && $_POST['repassword'] != "") && (isset($_POST['name1']) && $_POST['name1'] != "") && (isset($_POST['roll1']) && $_POST['roll1'] != "") && (isset($_POST['branch1']) && $_POST['branch1'] != "") && (isset($_POST['email1']) && $_POST['email1'] != "") && (isset($_POST['phno1']) && $_POST['phno1'] != "")) {
+        if ((isset($_POST['teamname']) && $_POST['teamname'] != "") && (isset($_POST['password']) && $_POST['password'] != "") && (isset($_POST['repassword']) && $_POST['repassword'] != "") && (isset($_POST['name1']) && $_POST['name1'] != "")&& (isset($_POST['email1']) && $_POST['email1'] != "") && (isset($_POST['phno1']) && $_POST['phno1'] != "")) {
             if (preg_match("/^[a-zA-Z0-9_@]+$/", $_POST['teamname'], $match) && $match[0] == $_POST['teamname']) {
                 if (addslashes($_POST['password']) == addslashes($_POST['repassword'])) {
                     $query = "select * from teams where teamname='" . addslashes($_POST['teamname']) . "'";
@@ -273,7 +283,7 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
             $curTime = time(); //so both start and endtime use same time
             $admin['starttime'] = $curTime;
             if ($admin['mode'] == "Active" && $admin['endtime'] == "") {
-                $admin['endtime'] = ($curTime + 180 * 60);
+                $admin['endtime'] = ($curTime + 90 * 60);
             } else {
                 $admin['endtime'] = ($curTime + $_POST['endtime'] * 60);
             }
@@ -300,14 +310,15 @@ if ($judge['value'] != "Lockdown" || (isset($_SESSION['loggedin']) && $_SESSION[
             $prob['statement'] = addslashes(file_get_contents($_FILES['statement']['tmp_name']));
             $prob['input'] = addslashes(file_get_contents($_FILES['input']['tmp_name']));
             $prob['output'] = addslashes(addslashes(file_get_contents($_FILES['output']['tmp_name'])));
-            $prob['sampleinput'] = addslashes(file_get_contents($_FILES['sampleinput']['tmp_name']));
-            $prob['sampleoutput'] = addslashes(addslashes(file_get_contents($_FILES['sampleoutput']['tmp_name'])));
+           // $prob['sampleinput'] = addslashes(file_get_contents($_FILES['sampleinput']['tmp_name']));
+           // $prob['sampleoutput'] = addslashes(addslashes(file_get_contents($_FILES['sampleoutput']['tmp_name'])));
             if ($_FILES['image']['size'] > 0) {
                 $prob['image'] = base64_encode(file_get_contents($_FILES['image']['tmp_name']));
             }
             $query = "insert into problems (" . implode(array_keys($prob), ",") . ") values ('" . implode(array_values($prob), "','") . "')";
-            DB::query($query);
-            $_SESSION['msg'] = "Problem Added.";
+            $res = DB::query($query);
+            if($res)
+            {$_SESSION['msg'] = "Problem Added.";}
             redirectTo("http://" . $_SERVER['HTTP_HOST'] . $_SESSION['url']);
         } else if (isset($_POST['updateproblem'])) {
             $query = "select * from admin where variable='ip' or variable ='port'";
